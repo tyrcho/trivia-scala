@@ -7,7 +7,7 @@ import java.util.Random
 object RecordGoldenMaster extends App {
 
 
-  for (i <- 0 to 1000) {
+  for (i <- 0 to 100) {
     record(i)
     println(s"recorded $i")
   }

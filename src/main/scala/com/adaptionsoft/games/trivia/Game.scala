@@ -14,7 +14,7 @@ class Game {
   }
 
   def recordRightAnswer(): Unit = {
-    if (!gameState.staysInPenalty) {
+    if (gameState.canWinCoinThisTurn) {
       println("Answer was correct!!!!")
       gameState.player.addCoin()
     }
@@ -30,10 +30,11 @@ class Game {
 
 
   private def canGetOut(roll: Int): Boolean = {
-    gameState.canGetOut = roll % 2 != 0
-    val isMaybe = if (gameState.canGetOut) "is" else "is not"
+    val canGetOut = roll % 2 != 0
+    val isMaybe = if (canGetOut) "is" else "is not"
     println(s"$player $isMaybe getting out of the penalty box")
-    gameState.canGetOut
+    gameState.player.inPenaltyBox = !canGetOut
+    canGetOut
   }
 
   private def drawQuestionCard(roll: Int): Unit = {

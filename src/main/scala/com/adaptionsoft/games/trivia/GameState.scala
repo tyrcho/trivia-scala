@@ -4,7 +4,6 @@ class GameState {
 
   var players = Seq.empty[Player]
   var turn = 0
-  var canGetOut = false // needed to keep strange behaviour : player in penalty box has to answer for nothing
   val questionBox = new QuestionBox
 
   def register(playerName: String): Unit = {
@@ -24,8 +23,8 @@ class GameState {
   def player: Player =
     players(turn % players.size)
 
-  def staysInPenalty: Boolean =
-    player.inPenaltyBox && !canGetOut
+  def canWinCoinThisTurn: Boolean =
+    !player.inPenaltyBox
 
   def gameOver: Boolean =
     players.exists(_.hasWon)
