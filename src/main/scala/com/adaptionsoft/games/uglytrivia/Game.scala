@@ -1,15 +1,9 @@
 package com.adaptionsoft.games.uglytrivia
 
-import java.util.ArrayList
-
 
 class Game {
-  var players: ArrayList[String] = new ArrayList[String]
-  var places: Array[Int] = new Array[Int](6)
-  var purses: Array[Int] = new Array[Int](6)
-  var inPenaltyBox: Array[Boolean] = new Array[Boolean](6)
-  var currentPlayer: Int = 0
-  var isGettingOutOfPenaltyBox: Boolean = false
+  val state = new State
+
 
   val questions = Seq("Pop", "Science", "Sports", "Rock")
     .map(cat => cat ->
@@ -17,81 +11,71 @@ class Game {
     .toMap
 
 
-  def registerPlayer(playerName: String): Boolean = {
-    players.add(playerName)
+  def registerPlayer(playerName: String) = {
+    state.players.add(playerName)
     println(playerName + " was added")
-    println(s"They are player number ${players.size}")
-    true
+    println(s"They are player number ${state.players.size}")
   }
 
   def playTurn(roll: Int): Unit = {
-    println(s"$currentPlayerName is the current player")
+    println(s"${state.currentPlayerName} is the current player")
     println(s"They have rolled a $roll")
-    if (inPenaltyBox(currentPlayer)) handlePenaltyBox(roll)
+    if (state.inPenaltyBox(state.currentPlayer)) handlePenaltyBox(roll)
     else movePlayer(roll)
   }
 
   private def handlePenaltyBox(roll: Int) = {
-    isGettingOutOfPenaltyBox = roll % 2 != 0
-    if (isGettingOutOfPenaltyBox) {
-      println(s"$currentPlayerName is getting out of the penalty box")
+    state.isGettingOutOfPenaltyBox = roll % 2 != 0
+    if (state.isGettingOutOfPenaltyBox) {
+      println(s"${state.currentPlayerName} is getting out of the penalty box")
       movePlayer(roll)
     }
-    else println(s"$currentPlayerName is not getting out of the penalty box")
+    else println(s"${state.currentPlayerName} is not getting out of the penalty box")
   }
 
   private def movePlayer(roll: Int) = {
-    places(currentPlayer) = (currentPlayerLocation + roll) % 12
-    println(s"$currentPlayerName's new location is $currentPlayerLocation")
+    state.places(state.currentPlayer) = (state.currentPlayerLocation + roll) % 12
+    println(s"${state.currentPlayerName}'s new location is ${state.currentPlayerLocation}")
     println(s"The category is $currentCategory")
     askQuestion()
   }
 
 
-
-  private def currentCategory: String = places(currentPlayer) match {
+  private def currentCategory: String = state.places(state.currentPlayer) match {
     case 0 | 4 | 8 => "Pop"
     case 1 | 5 | 9 => "Science"
     case 2 | 6 | 10 => "Sports"
     case _ => "Rock"
   }
 
-  def recordRightAnswer() =
-    if (inPenaltyBox(currentPlayer) && !isGettingOutOfPenaltyBox)
-      nextPlayer()
+  def recordRightAnswer() = {
+    if (state.currentPlayerInPenaltyBox && !state.isGettingOutOfPenaltyBox)
+      state.nextPlayer()
     else
       increaseMoney
+  }
 
 
   private def increaseMoney = {
     println("Answer was correct!!!!")
-    purses(currentPlayer) += 1
-    println(s"$currentPlayerName now has $currentPlayerMoney Gold Coins.")
-    nextPlayer()
+    state.increaseMoney()
+    println(s"${state.currentPlayerName} now has ${state.currentPlayerMoney} Gold Coins.")
+    state.nextPlayer()
   }
 
 
   def recordWrongAnswer() = {
     println("Question was incorrectly answered")
-    println(currentPlayerName + " was sent to the penalty box")
-    inPenaltyBox(currentPlayer) = true
-    nextPlayer()
+    println(state.currentPlayerName + " was sent to the penalty box")
+    state.inPenaltyBox(state.currentPlayer) = true
+    state.nextPlayer()
   }
-
-  private def currentPlayerLocation = places(currentPlayer)
 
   private def askQuestion() =
     println(questions(currentCategory).pop)
 
-  private def nextPlayer() =
-    currentPlayer = (currentPlayer + 1) % players.size
+  def gameIsNotOver = state.gameIsNotOver
 
-  def gameIsNotOver: Boolean = purses.forall(6 !=)
-
-  private def currentPlayerMoney = purses(currentPlayer)
-
-  private def currentPlayerName = players.get(currentPlayer)
-
-  def isPlayable: Boolean = (players.size >= 2)
+  def isPlayable: Boolean = (state.players.size >= 2)
 
 }
