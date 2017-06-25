@@ -1,6 +1,6 @@
 package com.adaptionsoft.games.uglytrivia
 
-import java.util.{LinkedList, ArrayList}
+import java.util.ArrayList
 
 
 class Game {
@@ -8,27 +8,16 @@ class Game {
   var places: Array[Int] = new Array[Int](6)
   var purses: Array[Int] = new Array[Int](6)
   var inPenaltyBox: Array[Boolean] = new Array[Boolean](6)
-  var popQuestions: LinkedList[String] = new LinkedList[String]
-  var scienceQuestions: LinkedList[String] = new LinkedList[String]
-  var sportsQuestions: LinkedList[String] = new LinkedList[String]
-  var rockQuestions: LinkedList[String] = new LinkedList[String]
   var currentPlayer: Int = 0
   var isGettingOutOfPenaltyBox: Boolean = false
 
-  def initialize() {
-    var i: Int = 0
-    while (i < 50) {
-      popQuestions.addLast("Pop Question " + i)
-      scienceQuestions.addLast(("Science Question " + i))
-      sportsQuestions.addLast(("Sports Question " + i))
-      rockQuestions.addLast(createRockQuestion(i))
-      i += 1
-    }
-  }
+  var popQuestions = buildQuestions("Pop")
+  var scienceQuestions = buildQuestions("Science")
+  var sportsQuestions = buildQuestions("Sports")
+  var rockQuestions = buildQuestions("Rock")
 
-  initialize()
-
-  def createRockQuestion(index: Int): String = "Rock Question " + index
+  private def buildQuestions(cat: String) =
+    collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i")
 
   def isPlayable: Boolean = (howManyPlayers >= 2)
 
@@ -72,10 +61,10 @@ class Game {
   }
 
   private def askQuestion: Unit = {
-    if (currentCategory == "Pop") println(popQuestions.removeFirst)
-    if (currentCategory == "Science") println(scienceQuestions.removeFirst)
-    if (currentCategory == "Sports") println(sportsQuestions.removeFirst)
-    if (currentCategory == "Rock") println(rockQuestions.removeFirst)
+    if (currentCategory == "Pop") println(popQuestions.pop)
+    if (currentCategory == "Science") println(scienceQuestions.pop)
+    if (currentCategory == "Sports") println(sportsQuestions.pop)
+    if (currentCategory == "Rock") println(rockQuestions.pop)
   }
 
   private def currentCategory: String = {
