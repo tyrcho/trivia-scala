@@ -5,12 +5,11 @@ class Player(val name: String,
              var coins: Int = 0,
              var inPenaltyBox: Boolean = false) {
 
-  def hasWon: Boolean =
-    coins == 6
+  def hasWon: Boolean = coins == 6
 
   def addCoin(): Unit = {
     coins += 1
-    println(s"${name} now has ${coins} Gold Coins.")
+    println(s"$name now has $coins Gold Coins.")
   }
 
 

@@ -4,7 +4,7 @@ class GameState {
 
   var players = Seq.empty[Player]
   var turn = 0
-  var canGetOut = false
+  var canGetOut = false // needed to keep strange behaviour : player in penalty box has to answer for nothing
   val questionBox = new QuestionBox
 
   def register(playerName: String): Unit = {

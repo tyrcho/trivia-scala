@@ -7,10 +7,10 @@ class Game {
     gameState.register(playerName)
 
   def playTurn(roll: Int): Unit = {
-    println(s"${player} is the current player")
+    println(s"$player is the current player")
     println(s"They have rolled a $roll")
-    if (gameState.player.inPenaltyBox) handlePenaltyBox(roll)
-    else advance(roll)
+    if (!gameState.player.inPenaltyBox || canGetOut(roll))
+      drawQuestionCard(roll)
   }
 
   def recordRightAnswer(): Unit = {
@@ -29,19 +29,17 @@ class Game {
   }
 
 
-  private def handlePenaltyBox(roll: Int): Unit = {
+  private def canGetOut(roll: Int): Boolean = {
     gameState.canGetOut = roll % 2 != 0
-    if (gameState.canGetOut) {
-      println(s"$player is getting out of the penalty box")
-      advance(roll)
-    }
-    else println(s"$player is not getting out of the penalty box")
+    val isMaybe = if (gameState.canGetOut) "is" else "is not"
+    println(s"$player $isMaybe getting out of the penalty box")
+    gameState.canGetOut
   }
 
-  private def advance(roll: Int): Unit = {
+  private def drawQuestionCard(roll: Int): Unit = {
     gameState.player.move(roll)
     println(s"The category is ${gameState.category}")
-    println(gameState.questionBox.nextQuestion(gameState.category))
+    println(gameState.questionBox.drawNextCard(gameState.category))
   }
 
 
