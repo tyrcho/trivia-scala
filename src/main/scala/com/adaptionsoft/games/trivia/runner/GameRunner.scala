@@ -8,12 +8,15 @@ object GameRunner {
   var notAWinner = false
 
   def main(args: Array[String]) {
+    runGame(new Random)
+  }
+
+  def runGame(rand: Random) = {
     var aGame = new Game();
     aGame.add("Chet")
     aGame.add("Pat")
     aGame.add("Sue")
 
-    var rand: Random = new Random
 
     do {
       aGame.roll(rand.nextInt(5) + 1)
