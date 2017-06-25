@@ -1,14 +1,22 @@
 package com.adaptionsoft.games.uglytrivia
 
+import scala.collection.mutable.Stack
+
 class QuestionBox {
-  def category(location: Int) = names(location % 4)
 
-  def nextQuestion(currentCategory: String) = cards(currentCategory).pop
+  val categories = Seq("Pop", "Science", "Sports", "Rock")
 
-  val names = Seq("Pop", "Science", "Sports", "Rock")
-  val cards = names
-    .map(cat => cat ->
-      collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i"))
+  val cards = categories
+    .map(cat =>
+      cat -> Stack.tabulate(50)(i =>
+        s"$cat Question $i"))
     .toMap
+
+  def category(location: Int): String =
+    categories(location % 4)
+
+  def nextQuestion(currentCategory: String): String = {
+    cards(currentCategory).pop
+  }
 
 }

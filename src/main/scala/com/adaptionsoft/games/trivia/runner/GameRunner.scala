@@ -10,15 +10,18 @@ object GameRunner extends App {
   runGame(new Random)
 
   def runGame(rand: Random) = {
-    val aGame = new Game
-    aGame.registerPlayer("Chet")
-    aGame.registerPlayer("Pat")
-    aGame.registerPlayer("Sue")
+    val game = new Game
+    game.registerPlayer("Chet")
+    game.registerPlayer("Pat")
+    game.registerPlayer("Sue")
+
+    def dice5sides() = rand.nextInt(5) + 1
 
     do {
-      aGame.playTurn(rand.nextInt(5) + 1)
-      if (rand.nextInt(9) == 7) aGame.recordWrongAnswer
-      else aGame.recordRightAnswer
-    } while (aGame.gameIsNotOver)
+      game.playTurn(dice5sides())
+      val correct = rand.nextInt(9) != 7
+      if (correct) game.recordRightAnswer()
+      else game.recordWrongAnswer()
+    } while (!game.gameOver)
   }
 }
