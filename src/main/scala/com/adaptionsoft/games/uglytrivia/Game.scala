@@ -19,37 +19,29 @@ class Game {
   private def buildQuestions(cat: String) =
     collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i")
 
-  def isPlayable: Boolean = (howManyPlayers >= 2)
+  def isPlayable: Boolean = (players.size >= 2)
 
   def registerPlayer(playerName: String): Boolean = {
     players.add(playerName)
-    places(howManyPlayers) = 0
-    purses(howManyPlayers) = 0
-    inPenaltyBox(howManyPlayers) = false
     println(playerName + " was added")
     println("They are player number " + players.size)
     true
   }
 
-  def howManyPlayers: Int = players.size
-
   def playTurn(roll: Int): Unit = {
     println(players.get(currentPlayer) + " is the current player")
     println("They have rolled a " + roll)
-    if (inPenaltyBox(currentPlayer)) {
-      if (roll % 2 != 0) {
-        isGettingOutOfPenaltyBox = true
-        println(players.get(currentPlayer) + " is getting out of the penalty box")
-        movePlayer(roll)
-      }
-      else {
-        println(players.get(currentPlayer) + " is not getting out of the penalty box")
-        isGettingOutOfPenaltyBox = false
-      }
-    }
-    else {
+    if (inPenaltyBox(currentPlayer)) handlePenaltyBox(roll)
+    else movePlayer(roll)
+  }
+
+  private def handlePenaltyBox(roll: Int) = {
+    isGettingOutOfPenaltyBox = roll % 2 != 0
+    if (isGettingOutOfPenaltyBox) {
+      println(players.get(currentPlayer) + " is getting out of the penalty box")
       movePlayer(roll)
     }
+    else println(players.get(currentPlayer) + " is not getting out of the penalty box")
   }
 
   private def movePlayer(roll: Int) = {
@@ -80,27 +72,20 @@ class Game {
   }
 
   def recordRightAnswer: Boolean = {
-    if (inPenaltyBox(currentPlayer)) {
-      if (isGettingOutOfPenaltyBox) {
-        increaseMoney
-      }
-      else {
-        nextPlayer
-        true
-      }
+    if (inPenaltyBox(currentPlayer) && !isGettingOutOfPenaltyBox) {
+      nextPlayer
+      true
     }
     else increaseMoney
   }
 
-  private def nextPlayer = {
-    currentPlayer = (currentPlayer + 1) % players.size
-  }
+  private def nextPlayer = currentPlayer = (currentPlayer + 1) % players.size
 
   private def increaseMoney = {
     println("Answer was correct!!!!")
     purses(currentPlayer) += 1
     println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
-    var winner: Boolean = gameIsNotOver
+    val winner: Boolean = gameIsNotOver
     nextPlayer
     winner
   }
