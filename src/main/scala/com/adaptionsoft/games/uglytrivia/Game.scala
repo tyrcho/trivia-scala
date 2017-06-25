@@ -32,7 +32,7 @@ class Game {
 
   def isPlayable: Boolean = (howManyPlayers >= 2)
 
-  def add(playerName: String): Boolean = {
+  def registerPlayer(playerName: String): Boolean = {
     players.add(playerName)
     places(howManyPlayers) = 0
     purses(howManyPlayers) = 0
@@ -44,7 +44,7 @@ class Game {
 
   def howManyPlayers: Int = players.size
 
-  def roll(roll: Int): Unit = {
+  def playTurn(roll: Int): Unit = {
     println(players.get(currentPlayer) + " is the current player")
     println("They have rolled a " + roll)
     if (inPenaltyBox(currentPlayer)) {
@@ -91,7 +91,7 @@ class Game {
     "Rock"
   }
 
-  def wasCorrectlyAnswered: Boolean = {
+  def recordRightAnswer: Boolean = {
     if (inPenaltyBox(currentPlayer)) {
       if (isGettingOutOfPenaltyBox) {
         println("Answer was correct!!!!")
@@ -109,7 +109,7 @@ class Game {
       }
     }
     else {
-      println("Answer was corrent!!!!")
+      println("Answer was correct!!!!")
       purses(currentPlayer) += 1
       println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
       var winner: Boolean = didPlayerWin
@@ -119,7 +119,7 @@ class Game {
     }
   }
 
-  def wrongAnswer: Boolean = {
+  def recordWrongAnswer: Boolean = {
     println("Question was incorrectly answered")
     println(players.get(currentPlayer) + " was sent to the penalty box")
     inPenaltyBox(currentPlayer) = true

@@ -1,31 +1,28 @@
 package com.adaptionsoft.games.trivia.runner
 
-import com.adaptionsoft.games.uglytrivia.Game
 import java.util.Random
+
+import com.adaptionsoft.games.uglytrivia.Game
 
 
 object GameRunner {
-  var notAWinner = false
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]) = {
     runGame(new Random)
   }
 
   def runGame(rand: Random) = {
-    var aGame = new Game();
-    aGame.add("Chet")
-    aGame.add("Pat")
-    aGame.add("Sue")
+    val aGame = new Game
+    aGame.registerPlayer("Chet")
+    aGame.registerPlayer("Pat")
+    aGame.registerPlayer("Sue")
 
-
+    var gameNotOver = false
     do {
-      aGame.roll(rand.nextInt(5) + 1)
-      if (rand.nextInt(9) == 7) {
-        notAWinner = aGame.wrongAnswer
-      }
-      else {
-        notAWinner = aGame.wasCorrectlyAnswered
-      }
-    } while (notAWinner)
+      aGame.playTurn(rand.nextInt(5) + 1)
+      gameNotOver =
+        if (rand.nextInt(9) == 7) aGame.recordWrongAnswer
+        else aGame.recordRightAnswer
+    } while (gameNotOver)
   }
 }
