@@ -17,12 +17,10 @@ object GameRunner {
     aGame.registerPlayer("Pat")
     aGame.registerPlayer("Sue")
 
-    var gameNotOver = false
     do {
       aGame.playTurn(rand.nextInt(5) + 1)
-      gameNotOver =
-        if (rand.nextInt(9) == 7) aGame.recordWrongAnswer
-        else aGame.recordRightAnswer
-    } while (gameNotOver)
+      if (rand.nextInt(9) == 7) aGame.recordWrongAnswer
+      else aGame.recordRightAnswer
+    } while (aGame.gameIsNotOver)
   }
 }

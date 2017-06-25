@@ -16,18 +16,17 @@ class Game {
       collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i"))
     .toMap
 
-  def isPlayable: Boolean = (players.size >= 2)
 
   def registerPlayer(playerName: String): Boolean = {
     players.add(playerName)
     println(playerName + " was added")
-    println("They are player number " + players.size)
+    println(s"They are player number ${players.size}")
     true
   }
 
   def playTurn(roll: Int): Unit = {
-    println(players.get(currentPlayer) + " is the current player")
-    println("They have rolled a " + roll)
+    println(s"$currentPlayerName is the current player")
+    println(s"They have rolled a $roll")
     if (inPenaltyBox(currentPlayer)) handlePenaltyBox(roll)
     else movePlayer(roll)
   }
@@ -35,21 +34,19 @@ class Game {
   private def handlePenaltyBox(roll: Int) = {
     isGettingOutOfPenaltyBox = roll % 2 != 0
     if (isGettingOutOfPenaltyBox) {
-      println(players.get(currentPlayer) + " is getting out of the penalty box")
+      println(s"$currentPlayerName is getting out of the penalty box")
       movePlayer(roll)
     }
-    else println(players.get(currentPlayer) + " is not getting out of the penalty box")
+    else println(s"$currentPlayerName is not getting out of the penalty box")
   }
 
   private def movePlayer(roll: Int) = {
-    places(currentPlayer) = (places(currentPlayer) + roll) % 12
-    println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
-    println("The category is " + currentCategory)
+    places(currentPlayer) = (currentPlayerLocation + roll) % 12
+    println(s"$currentPlayerName's new location is $currentPlayerLocation")
+    println(s"The category is $currentCategory")
     askQuestion()
   }
 
-  private def askQuestion() =
-    println(questions(currentCategory).pop)
 
 
   private def currentCategory: String = places(currentPlayer) match {
@@ -59,31 +56,42 @@ class Game {
     case _ => "Rock"
   }
 
-  def recordRightAnswer: Boolean =
-    if (inPenaltyBox(currentPlayer) && !isGettingOutOfPenaltyBox) {
-      nextPlayer
-      true
-    }
-    else increaseMoney
+  def recordRightAnswer() =
+    if (inPenaltyBox(currentPlayer) && !isGettingOutOfPenaltyBox)
+      nextPlayer()
+    else
+      increaseMoney
 
-  private def nextPlayer = currentPlayer = (currentPlayer + 1) % players.size
 
   private def increaseMoney = {
     println("Answer was correct!!!!")
     purses(currentPlayer) += 1
-    println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
-    val winner: Boolean = gameIsNotOver
-    nextPlayer
-    winner
+    println(s"$currentPlayerName now has $currentPlayerMoney Gold Coins.")
+    nextPlayer()
   }
 
-  def recordWrongAnswer: Boolean = {
+
+  def recordWrongAnswer() = {
     println("Question was incorrectly answered")
-    println(players.get(currentPlayer) + " was sent to the penalty box")
+    println(currentPlayerName + " was sent to the penalty box")
     inPenaltyBox(currentPlayer) = true
-    nextPlayer
-    true
+    nextPlayer()
   }
 
-  private def gameIsNotOver: Boolean = purses(currentPlayer) != 6
+  private def currentPlayerLocation = places(currentPlayer)
+
+  private def askQuestion() =
+    println(questions(currentCategory).pop)
+
+  private def nextPlayer() =
+    currentPlayer = (currentPlayer + 1) % players.size
+
+  def gameIsNotOver: Boolean = purses.forall(6 !=)
+
+  private def currentPlayerMoney = purses(currentPlayer)
+
+  private def currentPlayerName = players.get(currentPlayer)
+
+  def isPlayable: Boolean = (players.size >= 2)
+
 }
