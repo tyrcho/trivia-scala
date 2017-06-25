@@ -11,13 +11,10 @@ class Game {
   var currentPlayer: Int = 0
   var isGettingOutOfPenaltyBox: Boolean = false
 
-  var popQuestions = buildQuestions("Pop")
-  var scienceQuestions = buildQuestions("Science")
-  var sportsQuestions = buildQuestions("Sports")
-  var rockQuestions = buildQuestions("Rock")
-
-  private def buildQuestions(cat: String) =
-    collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i")
+  val questions = Seq("Pop", "Science", "Sports", "Rock")
+    .map(cat => cat ->
+      collection.mutable.Stack.tabulate(50)(i => s"$cat Question $i"))
+    .toMap
 
   def isPlayable: Boolean = (players.size >= 2)
 
@@ -48,36 +45,26 @@ class Game {
     places(currentPlayer) = (places(currentPlayer) + roll) % 12
     println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
     println("The category is " + currentCategory)
-    askQuestion
+    askQuestion()
   }
 
-  private def askQuestion: Unit = {
-    if (currentCategory == "Pop") println(popQuestions.pop)
-    if (currentCategory == "Science") println(scienceQuestions.pop)
-    if (currentCategory == "Sports") println(sportsQuestions.pop)
-    if (currentCategory == "Rock") println(rockQuestions.pop)
+  private def askQuestion() =
+    println(questions(currentCategory).pop)
+
+
+  private def currentCategory: String = places(currentPlayer) match {
+    case 0 | 4 | 8 => "Pop"
+    case 1 | 5 | 9 => "Science"
+    case 2 | 6 | 10 => "Sports"
+    case _ => "Rock"
   }
 
-  private def currentCategory: String = {
-    if (places(currentPlayer) == 0) return "Pop"
-    if (places(currentPlayer) == 4) return "Pop"
-    if (places(currentPlayer) == 8) return "Pop"
-    if (places(currentPlayer) == 1) return "Science"
-    if (places(currentPlayer) == 5) return "Science"
-    if (places(currentPlayer) == 9) return "Science"
-    if (places(currentPlayer) == 2) return "Sports"
-    if (places(currentPlayer) == 6) return "Sports"
-    if (places(currentPlayer) == 10) return "Sports"
-    "Rock"
-  }
-
-  def recordRightAnswer: Boolean = {
+  def recordRightAnswer: Boolean =
     if (inPenaltyBox(currentPlayer) && !isGettingOutOfPenaltyBox) {
       nextPlayer
       true
     }
     else increaseMoney
-  }
 
   private def nextPlayer = currentPlayer = (currentPlayer + 1) % players.size
 
