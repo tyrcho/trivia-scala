@@ -1,5 +1,4 @@
-package com.adaptionsoft.games.uglytrivia
-
+package com.adaptionsoft.games.trivia
 
 class Game {
   val gameState = new GameState

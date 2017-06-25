@@ -1,4 +1,4 @@
-package com.adaptionsoft.games.uglytrivia
+package com.adaptionsoft.games.trivia
 
 class Player(val name: String,
              var location: Int = 0,
