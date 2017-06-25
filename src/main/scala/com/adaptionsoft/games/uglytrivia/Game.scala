@@ -40,11 +40,7 @@ class Game {
       if (roll % 2 != 0) {
         isGettingOutOfPenaltyBox = true
         println(players.get(currentPlayer) + " is getting out of the penalty box")
-        places(currentPlayer) = places(currentPlayer) + roll
-        if (places(currentPlayer) > 11) places(currentPlayer) = places(currentPlayer) - 12
-        println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
-        println("The category is " + currentCategory)
-        askQuestion
+        movePlayer(roll)
       }
       else {
         println(players.get(currentPlayer) + " is not getting out of the penalty box")
@@ -52,12 +48,15 @@ class Game {
       }
     }
     else {
-      places(currentPlayer) = places(currentPlayer) + roll
-      if (places(currentPlayer) > 11) places(currentPlayer) = places(currentPlayer) - 12
-      println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
-      println("The category is " + currentCategory)
-      askQuestion
+      movePlayer(roll)
     }
+  }
+
+  private def movePlayer(roll: Int) = {
+    places(currentPlayer) = (places(currentPlayer) + roll) % 12
+    println(players.get(currentPlayer) + "'s new location is " + places(currentPlayer))
+    println("The category is " + currentCategory)
+    askQuestion
   }
 
   private def askQuestion: Unit = {
@@ -83,39 +82,36 @@ class Game {
   def recordRightAnswer: Boolean = {
     if (inPenaltyBox(currentPlayer)) {
       if (isGettingOutOfPenaltyBox) {
-        println("Answer was correct!!!!")
-        purses(currentPlayer) += 1
-        println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
-        var winner: Boolean = didPlayerWin
-        currentPlayer += 1
-        if (currentPlayer == players.size) currentPlayer = 0
-        winner
+        increaseMoney
       }
       else {
-        currentPlayer += 1
-        if (currentPlayer == players.size) currentPlayer = 0
+        nextPlayer
         true
       }
     }
-    else {
-      println("Answer was correct!!!!")
-      purses(currentPlayer) += 1
-      println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
-      var winner: Boolean = didPlayerWin
-      currentPlayer += 1
-      if (currentPlayer == players.size) currentPlayer = 0
-      winner
-    }
+    else increaseMoney
+  }
+
+  private def nextPlayer = {
+    currentPlayer = (currentPlayer + 1) % players.size
+  }
+
+  private def increaseMoney = {
+    println("Answer was correct!!!!")
+    purses(currentPlayer) += 1
+    println(players.get(currentPlayer) + " now has " + purses(currentPlayer) + " Gold Coins.")
+    var winner: Boolean = gameIsNotOver
+    nextPlayer
+    winner
   }
 
   def recordWrongAnswer: Boolean = {
     println("Question was incorrectly answered")
     println(players.get(currentPlayer) + " was sent to the penalty box")
     inPenaltyBox(currentPlayer) = true
-    currentPlayer += 1
-    if (currentPlayer == players.size) currentPlayer = 0
+    nextPlayer
     true
   }
 
-  private def didPlayerWin: Boolean = !(purses(currentPlayer) == 6)
+  private def gameIsNotOver: Boolean = purses(currentPlayer) != 6
 }
