@@ -1,7 +1,7 @@
 package com.adaptionsoft.games.uglytrivia
 
 class QuestionBox {
-  def category(location: Int)=names(location % 4)
+  def category(location: Int) = names(location % 4)
 
   def nextQuestion(currentCategory: String) = cards(currentCategory).pop
 

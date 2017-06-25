@@ -1,47 +1,24 @@
 package com.adaptionsoft.games.uglytrivia
 
-import java.util.ArrayList
 
 class Players {
-
-
-  var names: ArrayList[String] = new ArrayList[String]
-  var places: Array[Int] = new Array[Int](6)
-  var purses: Array[Int] = new Array[Int](6)
-  var inPenaltyBox: Array[Boolean] = new Array[Boolean](6)
-  var currentPlayer: Int = 0
-  var canGetOut: Boolean = false
-
-
-  def staysInPenalty: Boolean = inPenaltyBox(currentPlayer) && ! canGetOut
+  var players = Seq.empty[Player]
+  var turn = 0
+  var canGetOut = false
 
   def register(playerName: String) = {
-    names.add(playerName)
+    players :+= new Player(playerName)
     println(playerName + " was added")
-    println(s"They are player number ${names.size}")
-
+    println(s"They are player number ${players.size}")
   }
 
-  def move(roll: Int) =  {
-    places(currentPlayer) = (currentPlayerLocation + roll) % 12
+  def currentPlayer = players(turn % players.size)
+
+  def nextTurn() = {
+    turn += 1
   }
 
-  def sendToPenaltyBox() = inPenaltyBox(currentPlayer) = true
+  def staysInPenalty: Boolean = currentPlayer.inPenaltyBox && !canGetOut
 
-  def currentPlayerLocation = places(currentPlayer)
-
-  def currentPlayerName = names.get(currentPlayer)
-
-  def currentPlayerMoney = purses(currentPlayer)
-
-
-  def increaseMoney() = {
-    purses(currentPlayer) += 1
-    println(s"$currentPlayerName now has $currentPlayerMoney Gold Coins.")
-  }
-
-  def nextPlayer() =
-    currentPlayer = (currentPlayer + 1) % names.size
-
-  def gameIsNotOver = purses.forall(6 !=)
+  def gameIsNotOver = players.forall(_.coins != 6)
 }

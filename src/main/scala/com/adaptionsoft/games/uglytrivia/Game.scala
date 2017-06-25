@@ -11,41 +11,44 @@ class Game {
 
 
   def playTurn(roll: Int): Unit = {
-    println(s"${players.currentPlayerName} is the current player")
+    println(s"${currentPlayerName} is the current player")
     println(s"They have rolled a $roll")
-    if (players.inPenaltyBox(players.currentPlayer)) handlePenaltyBox(roll)
+    if (players.currentPlayer.inPenaltyBox) handlePenaltyBox(roll)
     else movePlayer(roll)
   }
 
   def recordRightAnswer() {
     if (!players.staysInPenalty) {
       println("Answer was correct!!!!")
-      players.increaseMoney()
+      players.currentPlayer.addCoin()
     }
-    players.nextPlayer()
+    players.nextTurn()
   }
 
 
   def recordWrongAnswer() = {
     println("Question was incorrectly answered")
-    println(players.currentPlayerName + " was sent to the penalty box")
-    players.sendToPenaltyBox()
-    players.nextPlayer()
+    println(currentPlayerName + " was sent to the penalty box")
+    players.currentPlayer.inPenaltyBox = true
+    players.nextTurn()
   }
 
 
   private def handlePenaltyBox(roll: Int) = {
     players.canGetOut = roll % 2 != 0
     if (players.canGetOut) {
-      println(s"${players.currentPlayerName} is getting out of the penalty box")
+      println(s"$currentPlayerName is getting out of the penalty box")
       movePlayer(roll)
     }
-    else println(s"${players.currentPlayerName} is not getting out of the penalty box")
+    else println(s"$currentPlayerName is not getting out of the penalty box")
+  }
+
+  private def currentPlayerName = {
+    players.currentPlayer.name
   }
 
   private def movePlayer(roll: Int) = {
-    players.move(roll)
-    println(s"${players.currentPlayerName}'s new location is ${players.currentPlayerLocation}")
+    players.currentPlayer.move(roll)
     println(s"The category is $currentCategory")
     println(questionBox.nextQuestion(currentCategory))
   }
@@ -53,6 +56,6 @@ class Game {
 
   def gameIsNotOver = players.gameIsNotOver
 
-  private def currentCategory: String = questionBox.category(players.currentPlayerLocation)
+  private def currentCategory: String = questionBox.category(players.currentPlayer.location)
 
 }
