@@ -5,11 +5,9 @@ import java.util.Random
 import com.adaptionsoft.games.uglytrivia.Game
 
 
-object GameRunner {
+object GameRunner extends App {
 
-  def main(args: Array[String]) = {
-    runGame(new Random)
-  }
+  runGame(new Random)
 
   def runGame(rand: Random) = {
     val aGame = new Game

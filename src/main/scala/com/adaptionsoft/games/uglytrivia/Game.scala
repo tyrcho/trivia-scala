@@ -17,6 +17,23 @@ class Game {
     else movePlayer(roll)
   }
 
+  def recordRightAnswer() {
+    if (!players.staysInPenalty) {
+      println("Answer was correct!!!!")
+      players.increaseMoney()
+    }
+    players.nextPlayer()
+  }
+
+
+  def recordWrongAnswer() = {
+    println("Question was incorrectly answered")
+    println(players.currentPlayerName + " was sent to the penalty box")
+    players.sendToPenaltyBox()
+    players.nextPlayer()
+  }
+
+
   private def handlePenaltyBox(roll: Int) = {
     players.canGetOut = roll % 2 != 0
     if (players.canGetOut) {
@@ -33,23 +50,6 @@ class Game {
     println(questionBox.nextQuestion(currentCategory))
   }
 
-
-  def recordRightAnswer() {
-    if (!players.staysInPenalty) {
-      println("Answer was correct!!!!")
-      players.increaseMoney()
-      println(s"${players.currentPlayerName} now has ${players.currentPlayerMoney} Gold Coins.")
-    }
-    players.nextPlayer()
-  }
-
-
-  def recordWrongAnswer() = {
-    println("Question was incorrectly answered")
-    println(players.currentPlayerName + " was sent to the penalty box")
-    players.putInPenaltyBox()
-    players.nextPlayer()
-  }
 
   def gameIsNotOver = players.gameIsNotOver
 

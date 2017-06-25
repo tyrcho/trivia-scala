@@ -22,9 +22,11 @@ class Players {
 
   }
 
-  def move(roll: Int) =  places(currentPlayer) = (currentPlayerLocation + roll) % 12
+  def move(roll: Int) =  {
+    places(currentPlayer) = (currentPlayerLocation + roll) % 12
+  }
 
-  def putInPenaltyBox() = inPenaltyBox(currentPlayer) = true
+  def sendToPenaltyBox() = inPenaltyBox(currentPlayer) = true
 
   def currentPlayerLocation = places(currentPlayer)
 
@@ -33,7 +35,10 @@ class Players {
   def currentPlayerMoney = purses(currentPlayer)
 
 
-  def increaseMoney() = purses(currentPlayer) += 1
+  def increaseMoney() = {
+    purses(currentPlayer) += 1
+    println(s"$currentPlayerName now has $currentPlayerMoney Gold Coins.")
+  }
 
   def nextPlayer() =
     currentPlayer = (currentPlayer + 1) % names.size
